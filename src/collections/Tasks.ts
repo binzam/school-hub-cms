@@ -82,8 +82,8 @@ export const Tasks: CollectionConfig = {
         { label: 'Pending', value: 'pending' },
         { label: 'Completed', value: 'completed' },
       ],
-      // students cant see it or change it
-      access: { read: canReview, create: isSuperAdminField, update: canReview },
+      // students cant see but not change it
+      access: { create: isSuperAdminField, update: canReview },
     },
     {
       name: 'isPriority',

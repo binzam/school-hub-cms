@@ -1,0 +1,186 @@
+// Student dashboard pieces, shared by the website and the Payload admin.
+// Needs the --sh-* variables (emit them with tokens.themes).
+
+$radius: 14px;
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+
+  @each $name, $token in (pending: warning, completed: success, priority: danger) {
+    &-#{$name} {
+      color: var(--sh-#{$token});
+      background: color-mix(in srgb, var(--sh-#{$token}) 14%, transparent);
+    }
+  }
+}
+
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid color-mix(in srgb, var(--sh-danger) 35%, var(--sh-border));
+  border-left-width: 4px;
+  border-radius: $radius;
+  background: color-mix(in srgb, var(--sh-danger) 8%, var(--sh-surface));
+
+  &__icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    color: var(--sh-danger);
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      max-width: 100%;
+      padding: 3px 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--sh-danger) 12%, transparent);
+      font-size: 13px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
+.panel {
+  padding: 24px;
+  border: 1px solid var(--sh-border);
+  border-radius: $radius;
+  background: var(--sh-surface);
+
+  &__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  &__sub {
+    margin: 2px 0 0;
+    color: var(--sh-muted);
+    font-size: 14px;
+  }
+
+  &__count {
+    margin-left: 8px;
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: var(--sh-surface-2);
+    color: var(--sh-muted);
+    font-family: var(--font-body, inherit);
+    font-size: 13px;
+    font-weight: 600;
+    vertical-align: middle;
+  }
+}
+
+.segmented {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--sh-border);
+  border-radius: 10px;
+  background: var(--sh-bg);
+
+  button {
+    padding: 6px 14px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--sh-muted);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover:not([aria-pressed='true']) {
+      color: var(--sh-text);
+    }
+
+    &[aria-pressed='true'] {
+      background: var(--sh-surface);
+      color: var(--sh-text);
+      box-shadow: 0 1px 2px var(--sh-shadow);
+    }
+  }
+}
+
+.chart-skeleton {
+  height: 260px;
+  border-radius: 10px;
+  background: var(--sh-surface-2);
+  opacity: 0.5;
+}
+
+.bars {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid color-mix(in srgb, var(--sh-success) 30%, var(--sh-border));
+  border-left-width: 4px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--sh-success) 7%, var(--sh-surface));
+
+  &__icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    color: var(--sh-success);
+  }
+
+  &__main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    overflow: hidden;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__meta {
+    color: var(--sh-muted);
+    font-size: 13px;
+  }
+
+  .badge {
+    flex-shrink: 0;
+  }
+}
+
+.empty {
+  padding: 12px 0;
+  color: var(--sh-muted);
+}

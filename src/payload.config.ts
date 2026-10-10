@@ -18,6 +18,33 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    components: {
+      beforeDashboard: [
+        {
+          path: '/components/admin/TaskCompletionChart',
+          exportName: 'TaskCompletionChart',
+          serverProps: {
+            title: 'Task completion rate',
+            collection: 'tasks',
+            doneWhere: { status: { equals: 'completed' } },
+          },
+        },
+        '/components/admin/StudentDashboard#StudentDashboard',
+      ],
+      actions: [
+        '/components/admin/HeaderViewSite#HeaderViewSite',
+        '/components/admin/HeaderThemeToggle#HeaderThemeToggle',
+        '/components/admin/HeaderLogout#HeaderLogout',
+      ],
+      afterNavLinks: ['/components/admin/NavMyTasks#NavMyTasks'],
+      logout: { Button: '/components/admin/HiddenLogout#HiddenLogout' },
+      views: {
+        myTasks: {
+          Component: '/components/admin/MyTasksView#MyTasksView',
+          path: '/my-tasks',
+        },
+      },
+    },
   },
   collections: [Users, Media, Tasks],
   editor: lexicalEditor(),

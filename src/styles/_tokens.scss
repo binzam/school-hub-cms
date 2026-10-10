@@ -1,0 +1,80 @@
+// Single source of truth for the SchoolHub palette (website + admin).
+// To change a color, edit it here. Nothing else needs to change.
+
+$light: (
+  bg: #f4f3ee,
+  surface: #fffefb,
+  surface-2: #ebe9e2,
+  border: #d9d6cc,
+  text: #1b2127,
+  muted: #5f6a73,
+  accent: #25476f,
+  accent-hover: #1c3a5c,
+  accent-contrast: #ffffff,
+  accent-soft: #e1e8f0,
+  success: #2c7a4f,
+  warning: #9a6412,
+  danger: #b0413a,
+  shadow: rgba(27, 33, 39, 0.16),
+);
+
+$dark: (
+  bg: #101317,
+  surface: #171b21,
+  surface-2: #1f242b,
+  border: #2b313a,
+  text: #e6e8eb,
+  muted: #98a2ad,
+  accent: #8fb1dd,
+  accent-hover: #a9c4e8,
+  accent-contrast: #0f1620,
+  accent-soft: #1b2635,
+  success: #6cc08f,
+  warning: #d9a94f,
+  danger: #e27c73,
+  shadow: rgba(0, 0, 0, 0.55),
+);
+
+// Turns a map into CSS custom properties: (bg: #fff) -> --sh-bg: #fff
+@mixin emit($tokens, $prefix: 'sh') {
+  @each $name, $value in $tokens {
+    --#{$prefix}-#{$name}: #{$value};
+  }
+}
+
+// Emits both themes:
+//  - explicit choice via <html data-theme='light|dark'>
+//  - no choice yet: follow the system preference
+@mixin themes($prefix: 'sh') {
+  :root,
+  :root[data-theme='light'] {
+    color-scheme: light;
+    @include emit($light, $prefix);
+  }
+
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+    @include emit($dark, $prefix);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+      color-scheme: dark;
+      @include emit($dark, $prefix);
+    }
+  }
+}
+
+// Write dark-only rules once; this covers both the explicit and system cases.
+// Usage:  .thing { @include dark { color: white; } }
+@mixin dark {
+  :root[data-theme='dark'] & {
+    @content;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) & {
+      @content;
+    }
+  }
+}

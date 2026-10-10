@@ -1,5 +1,6 @@
 'use client'
 
+import { homeFor } from '@/lib/homeFor'
 import Link from 'next/link'
 import { useState, type ChangeEvent } from 'react'
 
@@ -34,7 +35,9 @@ export default function LoginForm() {
 
       // Payload has set the payload-token cookie. /admin uses a different root
       // layout, so do a full navigation.
-      window.location.assign('/admin')
+      const data = await res.json()
+      console.log({ data })
+      window.location.assign(homeFor(data.user?.role))
     } catch {
       setError('Something went wrong. Please try again.')
       setLoading(false)

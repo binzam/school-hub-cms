@@ -37,6 +37,8 @@ export const Users: CollectionConfig = {
     read: readUsers,
     update: updateUsers,
     delete: isSuperAdmin,
+    // to block students from the admin entirely
+    // admin: ({ req: { user } }) => user?.role !== 'student',
   },
   hooks: {
     beforeValidate: [

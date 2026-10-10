@@ -3,6 +3,9 @@ import Link from 'next/link'
 import { getPayload } from 'payload'
 
 import config from '@/payload.config'
+import LogoutButton from './LogoutButton'
+import ThemeToggle from './ThemeToggle'
+import { homeFor } from '@/lib/homeFor'
 
 export const dynamic = 'force-dynamic'
 
@@ -74,18 +77,25 @@ export default async function HomePage() {
     limit: 3,
     sort: '-createdAt',
   })
-
+  const home = user ? homeFor(user.role) : '/login'
   return (
     <>
-      <header>
+      <header className="site-header">
+        {' '}
+        {/* was <header> */}
         <div className="container nav">
           <Link href="/" className="brand">
             <span className="brand-mark">S</span>
             SchoolHub
+            {user && <span className="small-text">Welcome, {user.role}</span>}
           </Link>
-          <Link href={user ? '/admin' : '/login'} className="btn btn-primary">
-            {user ? 'Open dashboard' : 'Sign in'}
-          </Link>
+          <div className="nav-actions">
+            <ThemeToggle />
+            <Link href={home} className="btn btn-primary">
+              {user ? 'Open dashboard' : 'Sign in'}
+            </Link>
+            {user && <LogoutButton />}
+          </div>
         </div>
       </header>
 
@@ -94,14 +104,14 @@ export default async function HomePage() {
           <div className="container">
             <span className="eyebrow">Task management for schools</span>
             <h1>
-              Keep every assignment <span className="gradient-text">on track.</span>
+              Keep every assignment <span className="accent-underline">on track.</span>
             </h1>
             <p className="lead">
               SchoolHub gives students a simple place to manage their tasks and gives teachers a
               clear view to review them, all managed by your school administrator.
             </p>
             <div className="hero-actions">
-              <Link href={user ? '/admin' : '/login'} className="btn btn-primary btn-lg">
+              <Link href={home} className="btn btn-primary btn-lg">
                 {user ? 'Open dashboard' : 'Sign in to SchoolHub'}
               </Link>
               <a href="#features" className="btn btn-ghost btn-lg">
