@@ -6,7 +6,7 @@ export async function getStudentTasks(payload: Payload, user: User) {
   const { docs } = await payload.find({
     collection: 'tasks',
     where: { student: { equals: user.id } },
-    select: { title: true, status: true, isPriority: true, createdAt: true },
+    select: { title: true, description: true, status: true, isPriority: true, createdAt: true },
     depth: 0,
     pagination: false,
     sort: '-createdAt',

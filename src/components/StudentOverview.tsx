@@ -1,6 +1,6 @@
-import { CircleCheck, Flag } from 'lucide-react'
-
+import { CircleCheck } from 'lucide-react'
 import type { StudentTask } from '../lib/getStudentTasks'
+import PriorityNotice from './PriorityNotice'
 import TasksChart from './TasksChart'
 
 const formatDate = (iso: string) =>
@@ -8,27 +8,10 @@ const formatDate = (iso: string) =>
 
 export default function StudentOverview({ tasks }: { tasks: StudentTask[] }) {
   const completed = tasks.filter((t) => t.status === 'completed')
-  const priorityOpen = tasks.filter((t) => t.isPriority && t.status !== 'completed')
-  const extra = priorityOpen.length - 3
 
   return (
     <>
-      {priorityOpen.length > 0 && (
-        <section className="notice" role="status">
-          <Flag className="notice__icon" aria-hidden />
-          <div>
-            <strong>
-              You have {priorityOpen.length} priority {priorityOpen.length === 1 ? 'task' : 'tasks'}
-            </strong>
-            <ul className="notice__chips">
-              {priorityOpen.slice(0, 3).map((t) => (
-                <li key={t.id}>{t.title}</li>
-              ))}
-              {extra > 0 && <li>+{extra} more</li>}
-            </ul>
-          </div>
-        </section>
-      )}
+      <PriorityNotice tasks={tasks} />
 
       <section className="panel">
         <TasksChart createdAt={tasks.map((t) => t.createdAt)} />

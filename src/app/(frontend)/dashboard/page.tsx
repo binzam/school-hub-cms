@@ -1,14 +1,15 @@
-import { Plus } from 'lucide-react'
 import { headers as getHeaders } from 'next/headers'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { getPayload } from 'payload'
 
-import StudentOverview from '@/components/StudentOverview'
+import PriorityNotice from '@/components/PriorityNotice'
+import TasksChart from '@/components/TasksChart'
 import { getStudentTasks } from '@/lib/getStudentTasks'
 import config from '@/payload.config'
 import LogoutButton from '../LogoutButton'
 import ThemeToggle from '../ThemeToggle'
+import TaskBoard from './TaskBoard'
 
 export const metadata = { title: 'My tasks · SchoolHub' }
 export const dynamic = 'force-dynamic'
@@ -43,17 +44,15 @@ export default async function DashboardPage() {
             <h1>My tasks</h1>
             <p>{user.email}</p>
           </div>
-          <div className="nav-actions">
-            <Link href="/admin/collections/tasks" className="btn btn-ghost">
-              All tasks
-            </Link>
-            <Link href="/admin/collections/tasks/create" className="btn btn-primary">
-              <Plus size={16} aria-hidden /> New task
-            </Link>
-          </div>
         </div>
 
-        <StudentOverview tasks={tasks} />
+        <PriorityNotice tasks={tasks} />
+
+        <TaskBoard tasks={tasks} />
+
+        <section className="panel">
+          <TasksChart createdAt={tasks.map((t) => t.createdAt)} />
+        </section>
       </main>
     </>
   )
