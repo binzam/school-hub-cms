@@ -81,8 +81,6 @@ export default async function HomePage() {
   return (
     <>
       <header className="site-header">
-        {' '}
-        {/* was <header> */}
         <div className="container nav">
           <Link href="/" className="brand">
             <span className="brand-mark">S</span>
