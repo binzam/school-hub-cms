@@ -70,6 +70,8 @@ export interface Config {
     users: User;
     media: Media;
     tasks: Task;
+    languages: Language;
+    'site-content': SiteContent;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -80,6 +82,8 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     tasks: TasksSelect<false> | TasksSelect<true>;
+    languages: LanguagesSelect<false> | LanguagesSelect<true>;
+    'site-content': SiteContentSelect<false> | SiteContentSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -126,6 +130,10 @@ export interface UserAuthOperations {
 export interface User {
   id: number;
   role: 'super-admin' | 'teacher' | 'student';
+  /**
+   * Language of the website when you are signed in.
+   */
+  preferredLanguage?: (number | null) | Language;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -145,6 +153,36 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "languages".
+ */
+export interface Language {
+  id: number;
+  /**
+   * e.g. Amharic
+   */
+  name: string;
+  /**
+   * Shown in the language switcher, e.g. አማርኛ
+   */
+  nativeName: string;
+  /**
+   * Used in the URL: /am, /ar, /pt-br. Cannot be changed later.
+   */
+  code: string;
+  direction?: ('ltr' | 'rtl') | null;
+  /**
+   * Disabled languages are hidden and their pages return 404. Their content is kept.
+   */
+  enabled?: boolean | null;
+  /**
+   * Fallback for untranslated text. Tick this on another language to move the default.
+   */
+  isDefault?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -184,6 +222,60 @@ export interface Task {
   createdAt: string;
 }
 /**
+ * One document per language. Empty fields fall back to the default language.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-content".
+ */
+export interface SiteContent {
+  id: number;
+  title?: string | null;
+  /**
+   * Created automatically when you add a language.
+   */
+  language: number | Language;
+  nav?: {
+    signIn?: string | null;
+    openDashboard?: string | null;
+  };
+  hero?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    /**
+     * The underlined part at the end of the title.
+     */
+    highlight?: string | null;
+    lead?: string | null;
+    primaryCta?: string | null;
+    secondaryCta?: string | null;
+    note?: string | null;
+  };
+  features?: {
+    heading?: string | null;
+    subheading?: string | null;
+    items?:
+      | {
+          title: string;
+          text: string;
+          icon?: ('shield' | 'check' | 'eye') | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  preview?: {
+    heading?: string | null;
+    subheading?: string | null;
+  };
+  footer?: {
+    /**
+     * Use {year} for the current year.
+     */
+    text?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -218,6 +310,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'tasks';
         value: number | Task;
+      } | null)
+    | ({
+        relationTo: 'languages';
+        value: number | Language;
+      } | null)
+    | ({
+        relationTo: 'site-content';
+        value: number | SiteContent;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -267,6 +367,7 @@ export interface PayloadMigration {
  */
 export interface UsersSelect<T extends boolean = true> {
   role?: T;
+  preferredLanguage?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -314,6 +415,72 @@ export interface TasksSelect<T extends boolean = true> {
   status?: T;
   isPriority?: T;
   showOnLanding?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "languages_select".
+ */
+export interface LanguagesSelect<T extends boolean = true> {
+  name?: T;
+  nativeName?: T;
+  code?: T;
+  direction?: T;
+  enabled?: T;
+  isDefault?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-content_select".
+ */
+export interface SiteContentSelect<T extends boolean = true> {
+  title?: T;
+  language?: T;
+  nav?:
+    | T
+    | {
+        signIn?: T;
+        openDashboard?: T;
+      };
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        highlight?: T;
+        lead?: T;
+        primaryCta?: T;
+        secondaryCta?: T;
+        note?: T;
+      };
+  features?:
+    | T
+    | {
+        heading?: T;
+        subheading?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              text?: T;
+              icon?: T;
+              id?: T;
+            };
+      };
+  preview?:
+    | T
+    | {
+        heading?: T;
+        subheading?: T;
+      };
+  footer?:
+    | T
+    | {
+        text?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

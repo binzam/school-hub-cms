@@ -26,5 +26,15 @@ export const Users: CollectionConfig = {
       // Nobody can promote themselves; only a super admin can set/change roles
       access: { create: isSuperAdmin, update: isSuperAdmin },
     },
+    {
+      name: 'preferredLanguage',
+      type: 'relationship',
+      relationTo: 'languages',
+      filterOptions: { enabled: { equals: true } },
+      admin: {
+        position: 'sidebar',
+        description: 'Language of the website when you are signed in.',
+      },
+    },
   ],
 }

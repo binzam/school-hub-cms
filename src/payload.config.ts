@@ -8,6 +8,8 @@ import sharp from 'sharp'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Tasks } from './collections/Tasks'
+import { Languages } from './collections/Languages'
+import { SiteContent } from './collections/SiteContent'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -46,7 +48,7 @@ export default buildConfig({
       },
     },
   },
-  collections: [Users, Media, Tasks],
+  collections: [Users, Media, Tasks, Languages, SiteContent],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

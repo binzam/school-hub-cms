@@ -1,4 +1,4 @@
-import type { Access, PayloadRequest, Where } from 'payload'
+import type { Access, CollectionConfig, PayloadRequest, Where } from 'payload'
 import type { Role } from './roles'
 
 type Args = { req: PayloadRequest }
@@ -29,3 +29,11 @@ export const rolesOrOwner =
     }
     return false
   }
+
+// Public content: anyone can read, only super admins can write
+export const publicReadAdminWrite: CollectionConfig['access'] = {
+  read: anyone,
+  create: isSuperAdmin,
+  update: isSuperAdmin,
+  delete: isSuperAdmin,
+}

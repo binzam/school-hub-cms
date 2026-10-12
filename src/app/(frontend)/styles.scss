@@ -677,3 +677,54 @@ h2 {
     }
   }
 }
+
+/* ---------- Language switcher ---------- */
+.lang {
+  position: relative;
+
+  &__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: auto;
+    padding: 0 12px;
+    font-size: 13px;
+    font-weight: 600;
+    list-style: none;
+    cursor: pointer;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+  }
+
+  &__menu {
+    position: absolute;
+    inset-inline-end: 0;
+    z-index: 20;
+    min-width: 160px;
+    margin: 6px 0 0;
+    padding: 6px;
+    border: 1px solid var(--sh-border);
+    border-radius: 12px;
+    background: var(--sh-surface);
+    box-shadow: 0 16px 32px -20px var(--sh-shadow);
+    list-style: none;
+
+    a {
+      display: block;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 14px;
+
+      &:hover {
+        background: var(--sh-surface-2);
+      }
+
+      &[aria-current='true'] {
+        color: var(--sh-accent);
+        font-weight: 600;
+      }
+    }
+  }
+}
