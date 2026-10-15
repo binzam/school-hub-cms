@@ -6,9 +6,11 @@ import type { SiteLanguage } from '@/lib/content/languages'
 export default function LanguageSwitcher({
   languages,
   current,
+  hrefFor = (code) => `/${code}`,
 }: {
   languages: SiteLanguage[]
   current: string
+  hrefFor?: (code: string) => string
 }) {
   if (languages.length < 2) return null
 
@@ -23,7 +25,7 @@ export default function LanguageSwitcher({
         {languages.map((l) => (
           <li key={l.code}>
             <Link
-              href={`/${l.code}`}
+              href={hrefFor(l.code)}
               lang={l.code}
               hrefLang={l.code}
               aria-current={l.code === current ? 'true' : undefined}

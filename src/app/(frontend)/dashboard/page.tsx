@@ -11,7 +11,7 @@ import LogoutButton from '@/components/LogoutButton'
 import ThemeToggle from '@/components/ThemeToggle'
 import TaskBoard from './TaskBoard'
 
-export const metadata = { title: 'My tasks · SchoolHub' }
+export const metadata = { title: 'My tasks · SchoolHub', robots: { index: false, follow: false } }
 export const dynamic = 'force-dynamic'
 
 export default async function DashboardPage() {

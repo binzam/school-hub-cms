@@ -101,6 +101,19 @@ export const SiteContent: CollectionConfig = {
       ],
     },
     {
+      name: 'news',
+      label: 'News pages',
+      type: 'group',
+      fields: [
+        { name: 'heading', type: 'text' },
+        { name: 'subheading', type: 'text' },
+        { name: 'readMore', type: 'text' },
+        { name: 'home', label: 'Breadcrumb: home', type: 'text' },
+        { name: 'back', label: 'Back to list link', type: 'text' },
+        { name: 'empty', label: 'Empty list message', type: 'text' },
+      ],
+    },
+    {
       name: 'footer',
       type: 'group',
       fields: [

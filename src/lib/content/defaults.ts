@@ -16,10 +16,18 @@ export type Content = {
   }
   preview: { heading: string; subheading: string }
   footer: { text: string }
+  news: {
+    heading: string
+    subheading: string
+    readMore: string
+    home: string
+    back: string
+    empty: string
+  }
 }
 
 // Which top-level fields of a site-content document hold the editable content
-export const CONTENT_KEYS = ['nav', 'hero', 'features', 'preview', 'footer'] as const
+export const CONTENT_KEYS = ['nav', 'hero', 'features', 'preview', 'news', 'footer'] as const
 
 export const defaultContent: Content = {
   nav: { signIn: 'Sign in', openDashboard: 'Open dashboard' },
@@ -52,6 +60,14 @@ export const defaultContent: Content = {
         icon: 'eye',
       },
     ],
+  },
+  news: {
+    heading: 'News',
+    subheading: 'Updates and announcements from SchoolHub.',
+    readMore: 'Read more',
+    home: 'Home',
+    back: 'All news',
+    empty: 'Nothing has been published yet.',
   },
   preview: { heading: 'A peek inside', subheading: 'Examples of tasks managed with SchoolHub.' },
   footer: { text: '© {year} SchoolHub. Built with Payload & Next.js.' },

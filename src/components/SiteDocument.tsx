@@ -19,7 +19,14 @@ export default function SiteDocument({
 }) {
   return (
     // suppressHydrationWarning: the script sets data-theme before React hydrates
-    <html lang={lang} dir={dir} translate="no" className={fontVariables} suppressHydrationWarning>
+    <html
+      lang={lang}
+      dir={dir}
+      translate="no"
+      className={fontVariables}
+      suppressHydrationWarning
+      data-scroll-behavior="smooth"
+    >
       <body>
         {/* A raw HTML string, not a React <script>: the browser runs it while parsing, and
             React never creates a script element on the client, so there's no warning */}

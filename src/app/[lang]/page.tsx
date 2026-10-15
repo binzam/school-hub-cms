@@ -1,15 +1,12 @@
 import { Eye, ListChecks, ShieldCheck } from 'lucide-react'
 import type { Metadata } from 'next'
-import Link from 'next/link'
-import { notFound } from 'next/navigation'
-import { cache } from 'react'
 
 import AuthLink from '@/components/AuthLink'
-import ThemeToggle from '@/components/ThemeToggle'
 import { defaultLanguage } from '@/lib/content/languages'
+import { loadLocalized } from '@/lib/content/loadLocalized'
 import { getRequestLanguages } from '@/lib/content/request'
-import { getSiteContent } from '@/lib/content/siteContent'
-import LanguageSwitcher from './LanguageSwitcher'
+import SiteFooter from './SiteFooter'
+import SiteHeader from './SiteHeader'
 
 // Pre-rendered and cached. Admin edits refresh it immediately through the revalidation
 // hooks; this hourly refresh is only a safety net.
@@ -24,18 +21,9 @@ export async function generateStaticParams() {
   return languages.map((l) => ({ lang: l.code }))
 }
 
-const load = cache(async (code: string) => {
-  const { payload, languages } = await getRequestLanguages()
-  const language = languages.find((l) => l.code === code)
-  if (!language) notFound() // unknown, disabled or deleted language
-
-  const content = await getSiteContent(payload, language, defaultLanguage(languages))
-  return { payload, languages, language, content }
-})
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = await params
-  const { languages, language, content } = await load(lang)
+  const { languages, language, content } = await loadLocalized(lang)
 
   return {
     title: `${content.hero.title} ${content.hero.highlight}`.trim() + ' · SchoolHub',
@@ -52,7 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function LandingPage({ params }: Props) {
   const { lang } = await params
-  const { payload, languages, language, content } = await load(lang)
+  const { payload, languages, language, content } = await loadLocalized(lang)
 
   // Only tasks a super admin explicitly flagged, and only these fields
   const { docs: tasks } = await payload.find({
@@ -64,27 +52,9 @@ export default async function LandingPage({ params }: Props) {
     sort: '-createdAt',
   })
 
-
   return (
     <>
-      <header className="site-header">
-        <div className="container nav">
-          <Link href={`/${language.code}`} className="brand">
-            <span className="brand-mark">S</span>
-            SchoolHub
-          </Link>
-          <div className="nav-actions">
-            <LanguageSwitcher languages={languages} current={language.code} />
-            <ThemeToggle />
-            <AuthLink
-              signedOutLabel={content.nav.signIn}
-              signedInLabel={content.nav.openDashboard}
-              className="btn btn-primary"
-              showLogout
-            />
-          </div>
-        </div>
-      </header>
+      <SiteHeader language={language} languages={languages} content={content} />
 
       <main>
         <section className="hero">
@@ -92,7 +62,9 @@ export default async function LandingPage({ params }: Props) {
             <span className="eyebrow">{content.hero.eyebrow}</span>
             <h1>
               {content.hero.title}{' '}
-              {content.hero.highlight && <span className="accent-underline">{content.hero.highlight}</span>}
+              {content.hero.highlight && (
+                <span className="accent-underline">{content.hero.highlight}</span>
+              )}
             </h1>
             <p className="lead">{content.hero.lead}</p>
             <div className="hero-actions">
@@ -158,15 +130,7 @@ export default async function LandingPage({ params }: Props) {
         )}
       </main>
 
-      <footer className="footer">
-        <div className="container footer-inner">
-          <Link href={`/${language.code}`} className="brand">
-            <span className="brand-mark">S</span>
-            SchoolHub
-          </Link>
-          <span>{content.footer.text.replace('{year}', String(new Date().getFullYear()))}</span>
-        </div>
-      </footer>
+      <SiteFooter language={language} content={content} />
     </>
   )
 }

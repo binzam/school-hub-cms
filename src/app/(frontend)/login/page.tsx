@@ -6,7 +6,7 @@ import config from '@/payload.config'
 import LoginForm from './LoginForm'
 import { homeFor } from '@/lib/homeFor'
 
-export const metadata = { title: 'Sign in · SchoolHub' }
+export const metadata = { title: 'Sign in · SchoolHub', robots: { index: false, follow: false } }
 export const dynamic = 'force-dynamic'
 
 export default async function LoginPage() {

@@ -72,6 +72,7 @@ export interface Config {
     tasks: Task;
     languages: Language;
     'site-content': SiteContent;
+    posts: Post;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -84,6 +85,7 @@ export interface Config {
     tasks: TasksSelect<false> | TasksSelect<true>;
     languages: LanguagesSelect<false> | LanguagesSelect<true>;
     'site-content': SiteContentSelect<false> | SiteContentSelect<true>;
+    posts: PostsSelect<false> | PostsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -202,6 +204,24 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+  sizes?: {
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    og?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -266,6 +286,14 @@ export interface SiteContent {
     heading?: string | null;
     subheading?: string | null;
   };
+  news?: {
+    heading?: string | null;
+    subheading?: string | null;
+    readMore?: string | null;
+    home?: string | null;
+    back?: string | null;
+    empty?: string | null;
+  };
   footer?: {
     /**
      * Use {year} for the current year.
@@ -274,6 +302,62 @@ export interface SiteContent {
   };
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: number;
+  title: string;
+  /**
+   * The page address, generated from the title. Fix it before publishing: changing it later breaks existing links.
+   */
+  slug: string;
+  language: number | Language;
+  /**
+   * If this post translates another one, pick the original. Leave empty for an original.
+   */
+  translationOf?: (number | null) | Post;
+  /**
+   * Summary shown in lists. Also the search description unless you set one under SEO.
+   */
+  excerpt: string;
+  cover?: (number | null) | Media;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  publishedAt?: string | null;
+  seo?: {
+    /**
+     * Shown in search results. Empty = the title. Aim for under 60 characters.
+     */
+    metaTitle?: string | null;
+    /**
+     * Shown under the title in search results. Empty = the excerpt. Aim for 120 to 160 characters.
+     */
+    metaDescription?: string | null;
+    /**
+     * Used when the page is shared. Empty = the cover image.
+     */
+    ogImage?: (number | null) | Media;
+    noindex?: boolean | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -318,6 +402,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'site-content';
         value: number | SiteContent;
+      } | null)
+    | ({
+        relationTo: 'posts';
+        value: number | Post;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -403,6 +491,30 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?:
+    | T
+    | {
+        card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        og?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -476,6 +588,16 @@ export interface SiteContentSelect<T extends boolean = true> {
         heading?: T;
         subheading?: T;
       };
+  news?:
+    | T
+    | {
+        heading?: T;
+        subheading?: T;
+        readMore?: T;
+        home?: T;
+        back?: T;
+        empty?: T;
+      };
   footer?:
     | T
     | {
@@ -483,6 +605,31 @@ export interface SiteContentSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts_select".
+ */
+export interface PostsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  language?: T;
+  translationOf?: T;
+  excerpt?: T;
+  cover?: T;
+  content?: T;
+  publishedAt?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        noindex?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

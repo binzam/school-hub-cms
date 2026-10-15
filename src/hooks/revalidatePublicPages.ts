@@ -8,6 +8,7 @@ export function revalidatePublicPages(context?: Record<string, unknown>) {
   try {
     revalidatePath('/') // "/" redirects to the default language, which can change
     revalidatePath('/[lang]', 'layout') // every language page, and the layout that sets lang/dir
+    revalidatePath('/sitemap.xml')
   } catch {
     // not running inside a Next.js request (a script, for example): nothing to revalidate
   }
