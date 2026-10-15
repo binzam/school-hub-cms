@@ -1,13 +1,17 @@
 import type { CollectionConfig } from 'payload'
 import { canReview, isSuperAdmin, notTeacher } from '@/access'
 import { taskAccess } from './access'
-import { setStudentOnCreate } from './hooks'
+import { revalidateLandingTasks, revalidateLandingTasksOnDelete, setStudentOnCreate } from './hooks'
 
 export const Tasks: CollectionConfig = {
   slug: 'tasks',
   admin: { useAsTitle: 'title', defaultColumns: ['title', 'student', 'status', 'isPriority'] },
   access: taskAccess,
-  hooks: { beforeValidate: [setStudentOnCreate] },
+  hooks: {
+    beforeValidate: [setStudentOnCreate],
+    afterChange: [revalidateLandingTasks],
+    afterDelete: [revalidateLandingTasksOnDelete],
+  },
   fields: [
     { name: 'title', type: 'text', required: true, access: { update: notTeacher } },
     {

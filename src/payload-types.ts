@@ -174,7 +174,7 @@ export interface Language {
   code: string;
   direction?: ('ltr' | 'rtl') | null;
   /**
-   * Disabled languages are hidden and their pages return 404. Their content is kept.
+   * New languages stay hidden until you tick this. Translate the content first. Disabled languages return 404 and are left out of the switcher, hreflang and sitemap.
    */
   enabled?: boolean | null;
   /**

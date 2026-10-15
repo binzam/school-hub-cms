@@ -7,8 +7,8 @@ import PriorityNotice from '@/components/PriorityNotice'
 import TasksChart from '@/components/TasksChart'
 import { getStudentTasks } from '@/lib/getStudentTasks'
 import config from '@/payload.config'
-import LogoutButton from '../LogoutButton'
-import ThemeToggle from '../ThemeToggle'
+import LogoutButton from '@/components/LogoutButton'
+import ThemeToggle from '@/components/ThemeToggle'
 import TaskBoard from './TaskBoard'
 
 export const metadata = { title: 'My tasks · SchoolHub' }

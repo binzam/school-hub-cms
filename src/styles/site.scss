@@ -1,5 +1,5 @@
-@use '../../styles/tokens' as t;
-@use '../../styles/dashboard';
+@use 'tokens' as t;
+@use 'dashboard';
 @include t.themes;
 
 :root {

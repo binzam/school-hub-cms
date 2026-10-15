@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { publicReadAdminWrite } from '../../access'
 import { onePerLanguage, protectDefaultContent, setTitle } from './hooks'
+import { revalidateAfterChange, revalidateAfterDelete } from '@/hooks/revalidatePublicPages'
 
 export const SiteContent: CollectionConfig = {
   slug: 'site-content',
@@ -18,6 +19,8 @@ export const SiteContent: CollectionConfig = {
     beforeValidate: [onePerLanguage],
     beforeChange: [setTitle],
     beforeDelete: [protectDefaultContent],
+    afterChange: [revalidateAfterChange],
+    afterDelete: [revalidateAfterDelete],
   },
   fields: [
     { name: 'title', type: 'text', admin: { hidden: true } },

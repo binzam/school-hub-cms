@@ -1,29 +1,31 @@
 import { Eye, ListChecks, ShieldCheck } from 'lucide-react'
 import type { Metadata } from 'next'
-import { headers as getHeaders } from 'next/headers'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getPayload } from 'payload'
 import { cache } from 'react'
 
-import { defaultLanguage, getLanguages } from '@/lib/content/languages'
+import AuthLink from '@/components/AuthLink'
+import ThemeToggle from '@/components/ThemeToggle'
+import { defaultLanguage } from '@/lib/content/languages'
+import { getRequestLanguages } from '@/lib/content/request'
 import { getSiteContent } from '@/lib/content/siteContent'
-import { homeFor } from '@/lib/homeFor'
-import config from '@/payload.config'
-import LogoutButton from '../LogoutButton'
-import ThemeToggle from '../ThemeToggle'
 import LanguageSwitcher from './LanguageSwitcher'
 
-export const dynamic = 'force-dynamic'
+// Pre-rendered and cached. Admin edits refresh it immediately through the revalidation
+// hooks; this hourly refresh is only a safety net.
+export const revalidate = 3600
 
 const ICONS = { shield: ShieldCheck, check: ListChecks, eye: Eye } as const
 
 type Props = { params: Promise<{ lang: string }> }
 
-// cache() makes generateMetadata and the page share one load per request
+export async function generateStaticParams() {
+  const { languages } = await getRequestLanguages()
+  return languages.map((l) => ({ lang: l.code }))
+}
+
 const load = cache(async (code: string) => {
-  const payload = await getPayload({ config: await config })
-  const languages = await getLanguages(payload)
+  const { payload, languages } = await getRequestLanguages()
   const language = languages.find((l) => l.code === code)
   if (!language) notFound() // unknown, disabled or deleted language
 
@@ -51,9 +53,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function LandingPage({ params }: Props) {
   const { lang } = await params
   const { payload, languages, language, content } = await load(lang)
-  const { user } = await payload.auth({ headers: await getHeaders() })
-  const home = user ? homeFor(user.role) : '/login'
-  const homeLabel = user ? content.nav.openDashboard : content.nav.signIn
 
   // Only tasks a super admin explicitly flagged, and only these fields
   const { docs: tasks } = await payload.find({
@@ -65,8 +64,9 @@ export default async function LandingPage({ params }: Props) {
     sort: '-createdAt',
   })
 
+
   return (
-    <div lang={language.code} dir={language.direction}>
+    <>
       <header className="site-header">
         <div className="container nav">
           <Link href={`/${language.code}`} className="brand">
@@ -76,10 +76,12 @@ export default async function LandingPage({ params }: Props) {
           <div className="nav-actions">
             <LanguageSwitcher languages={languages} current={language.code} />
             <ThemeToggle />
-            <Link href={home} className="btn btn-primary">
-              {homeLabel}
-            </Link>
-            {user && <LogoutButton />}
+            <AuthLink
+              signedOutLabel={content.nav.signIn}
+              signedInLabel={content.nav.openDashboard}
+              className="btn btn-primary"
+              showLogout
+            />
           </div>
         </div>
       </header>
@@ -90,15 +92,15 @@ export default async function LandingPage({ params }: Props) {
             <span className="eyebrow">{content.hero.eyebrow}</span>
             <h1>
               {content.hero.title}{' '}
-              {content.hero.highlight && (
-                <span className="accent-underline">{content.hero.highlight}</span>
-              )}
+              {content.hero.highlight && <span className="accent-underline">{content.hero.highlight}</span>}
             </h1>
             <p className="lead">{content.hero.lead}</p>
             <div className="hero-actions">
-              <Link href={home} className="btn btn-primary btn-lg">
-                {user ? content.nav.openDashboard : content.hero.primaryCta}
-              </Link>
+              <AuthLink
+                signedOutLabel={content.hero.primaryCta}
+                signedInLabel={content.nav.openDashboard}
+                className="btn btn-primary btn-lg"
+              />
               <a href="#features" className="btn btn-ghost btn-lg">
                 {content.hero.secondaryCta}
               </a>
@@ -165,6 +167,6 @@ export default async function LandingPage({ params }: Props) {
           <span>{content.footer.text.replace('{year}', String(new Date().getFullYear()))}</span>
         </div>
       </footer>
-    </div>
+    </>
   )
 }

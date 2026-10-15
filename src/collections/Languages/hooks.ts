@@ -25,18 +25,23 @@ export const enforceLanguageRules: CollectionBeforeValidateHook<Language> = asyn
 
   if (operation === 'create') {
     const { totalDocs } = await req.payload.count({ collection: 'languages', req })
-    if (totalDocs === 0) return { ...data, isDefault: true, enabled: true } // first language = default
+    if (totalDocs === 0) return { ...data, isDefault: true, enabled: true } // first language: default and live
   }
 
-  const isDefault = data.isDefault ?? originalDoc?.isDefault ?? false
-  const enabled = data.enabled ?? originalDoc?.enabled ?? true
-
-  if (originalDoc?.isDefault && data.isDefault === false) {
+  const wasDefault = originalDoc?.isDefault === true
+  if (wasDefault && data.isDefault === false) {
     throw rule('Make another language the default instead of unchecking this one.')
   }
+
+  // choosing a new default also enables it
+  const becomingDefault = data.isDefault === true && !wasDefault
+  const next = becomingDefault ? { ...data, enabled: true } : data
+
+  const isDefault = next.isDefault ?? originalDoc?.isDefault ?? false
+  const enabled = next.enabled ?? originalDoc?.enabled ?? false
   if (isDefault && !enabled) throw rule('The default language must be enabled.')
 
-  return data
+  return next
 }
 
 // Copy the current default language's content (or the built-in text) for a new language

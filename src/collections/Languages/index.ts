@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { publicReadAdminWrite } from '@/access'
 import { afterLanguageChange, beforeLanguageDelete, enforceLanguageRules } from './hooks'
+import { revalidateAfterChange, revalidateAfterDelete } from '@/hooks/revalidatePublicPages'
 
 // paths the app already uses
 const RESERVED = ['api']
@@ -18,8 +19,9 @@ export const Languages: CollectionConfig = {
   access: publicReadAdminWrite,
   hooks: {
     beforeValidate: [enforceLanguageRules],
-    afterChange: [afterLanguageChange],
+    afterChange: [afterLanguageChange, revalidateAfterChange],
     beforeDelete: [beforeLanguageDelete],
+    afterDelete: [revalidateAfterDelete],
   },
   fields: [
     {
@@ -69,11 +71,11 @@ export const Languages: CollectionConfig = {
     {
       name: 'enabled',
       type: 'checkbox',
-      defaultValue: true,
+      defaultValue: false,
       admin: {
         position: 'sidebar',
         description:
-          'Disabled languages are hidden and their pages return 404. Their content is kept.',
+          'New languages stay hidden until you tick this. Translate the content first. Disabled languages return 404 and are left out of the switcher, hreflang and sitemap.',
       },
     },
     {
